@@ -1,0 +1,7 @@
+{
+  "name": quake-watch-2",
+  "description": "Displays the latest Earthquakes from the USGS",
+  "author": "Scott Immerman",
+  "email": "widgets.app@sealsystems.net",
+  "version": "180828"
+}
