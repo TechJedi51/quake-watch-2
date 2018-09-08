@@ -1,7 +1,7 @@
-#Quake Watch
+#Quake Watch v3
 debug = 0
 numberOfQuakes = 9 # max of 20
-
+minimumMagmatude = 3.0
 command: "curl -s 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'"
 
 refreshFrequency: '15m'
@@ -45,12 +45,15 @@ update: (output, domEl) ->
   if numberOfQuakes > 20
     maxQuakes = 20
   else
-    maxQuakes = numberOfQuakes
-  for i in [0..numberOfQuakes-1]
+    maxQuakes = numberOfQuakes - 1
 
-    magnatude = quakeData.features[i].properties.mag.toFixed 1
-    location = quakeData.features[i].properties.place
-    quakeTime = new Date(quakeData.features[i].properties.time)
+  count = 0
+  record = 0
+  loop
+    magnatude = quakeData.features[record].properties.mag.toFixed 1
+    location = quakeData.features[record].properties.place
+    quakeTime = new Date(quakeData.features[record].properties.time)
+    record++
     dayofweek = quakeTime.getDay()
     daylist = [
       'Sunday'
@@ -103,23 +106,18 @@ update: (output, domEl) ->
     if magnatude>=7 then magStyle = "m7"
     if magnatude>=8 then magStyle = "mega"
 
-     
     quake =
       image: "quake-watch-2.widget/images/" + magStyle + ".png" 
       title: location
       date: displayQuakeTime
       mag: magnatude
       rowclass: magStyle
-
-    ul.append renderQuake(quake)
-
-
-
-
-
-
-
-
+      
+    if magnatude>=minimumMagmatude
+      ul.append renderQuake(quake)
+      count++
+    
+    if count > maxQuakes then break
 
 
 style: """
@@ -216,16 +214,16 @@ style: """
     background-color: rgba(13, 13, 251, .4)
     color: #fff
   .m5
-    background-color: rgba(255,220, 0, .4)
+    background-color: rgba(255,120, 0, .4)
     color: #fff
   .m6
     background-color: rgba(251, 132, 13, .5)
     color: #fff
   .m7
     background-color: rgba(255, 0, 0, .5)
-    color: #777
+    color: #ff0
   .mega
-    background-color: rgba(255, 0, 0, .5)
-    color: #777
+    background-color: rgba(255, 0, 0, 1.0)
+    color: #ff0
 
 """
